@@ -1,4 +1,7 @@
 <h2>Add new Article</h2>
+{{#if message}}
+<div class="error">{{message}}</div>
+{{/if}}
 <form method="POST" action="">
 	<div>
 		<label for="title">Title:</label>

@@ -10,21 +10,19 @@ const UserSchema = mongoose.Schema({
   password: {type: String, unique: true, required: true}
 });
 
-// register model
-const User = mongoose.model("User", UserSchema);
-
 // add article schema
 const ArticleSchema = mongoose.Schema({
   title: {type: String, required: true},
   url: {type: String, required: true},
   description: {type: String},
-  userId: {type: mongoose.Schema.Types.ObjectId, unique: true, required: true, ref: User}
+  userId: {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'UserSchema'}
 });
 
 // use plugin (for slug) for article
 ArticleSchema.plugin(URLSlugs('title'));
 
-// register model
+// register models
+mongoose.model("User", UserSchema);
 mongoose.model("Article", ArticleSchema);
 
 // connect to database

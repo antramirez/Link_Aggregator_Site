@@ -90,7 +90,6 @@ function login(username, password, errorCallback, successCallback) {
 function startAuthenticatedSession(req, user, cb) {
   // start session by setting session user to user logged in/registered and then call callback
   req.session.regenerate((err) => {
-    console.log('helllooooooooooooooooo', user);
     req.session.user = user;
   });
   cb();

@@ -8,6 +8,10 @@ const auth = require('./auth.js');
 
 const app = express();
 
+// register schemas
+const Article = mongoose.model('Article');
+const User = mongoose.model('User');
+
 app.set('view engine', 'hbs');
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -26,18 +30,54 @@ app.use((req, res, next) => {
 })
 
 app.get('/', (req, res) => {
-  res.render('index');
+  Article.find({}, function(err, articles, count) {
+    // send context object with every article found in db to homepage
+    res.render('index', {articles: articles.reverse()});
+  });
 });
 
 app.get('/article/add', (req, res) => {
+  // check if user is logged in, or else redirect them to do so
+  if (!req.session.user) {
+    res.redirect('/login');
+  }
+  else {
+    res.render('article-add');
+  }
 });
 
 app.post('/article/add', (req, res) => {
+  // create new article with fields that match the form fields
+  new Article({
+    title: req.body.title,
+    url: req.body.url,
+    description: req.body.description,
+    userId: res.locals.user._id
+  }).save(function(err, newArticle, count) {
+    if (err) {
+      // log error and create error context object if error
+      console.log(err);
+      const errObj = {message: 'COULD NOT ADD ARTICLE'};
+      console.log(errObj.message);
+      res.render('article-add', {message: errObj.message})
+    }
+    else {
+      // if no error, redirect to homepage
+      res.redirect('/');
+    }
+  });
 });
 
-// come up with a url for /article/slug-name!
-// app.get('add url here!', (req, res) => {
-// });
+app.get('/article/:slug', (req, res) => {
+  // find article that matches the slug in the url
+  Article.findOne({slug: req.params.slug}, function(err, article, count) {
+    // once article is found, look for user that has object id that matches related article id
+    User.findOne({_id: article.userId}, function(err, user, count) {
+      // render the page with appropriate context object
+      res.render('article-detail', {a: article, u: user})
+    });
+  });
+});
 
 app.get('/register', (req, res) => {
   res.render('register');
@@ -54,6 +94,7 @@ app.post('/register', (req, res) => {
   (user) => {
     auth.startAuthenticatedSession(req, user, () => {
       // set session user to user who just registered and redirect to home
+      req.session.user = user;
       res.redirect('/');
     });
   });
