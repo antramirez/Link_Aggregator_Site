@@ -6,6 +6,15 @@
 	<link rel="stylesheet" href="/css/site.css" type="text/css" media="screen" title="no title" charset="utf-8">
 </head>
 <body>
+	<header>
+		<a href='/'>Home</a>
+		{{#if user}}
+			| <a href='article/add'>Add</a>
+			<p>Logged in as: {{user.username}}</p>
+		{{else}}
+			<a href='/register'>Register</a> or <a href="/login">Login</a>
+		{{/if}}
+	</header>
 	{{{body}}}
 </body>
 </html>

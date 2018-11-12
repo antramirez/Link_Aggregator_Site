@@ -32,7 +32,7 @@ function register(username, email, password, errorCallback, successCallback) {
             errorCallback(errObj);
           }
           else {
-            // if no hasing error, save new user with hased password
+            // if no hashing error, save new user with hased password
             new User({
               username: username,
               email: email,
@@ -88,16 +88,12 @@ function login(username, password, errorCallback, successCallback) {
 }
 
 function startAuthenticatedSession(req, user, cb) {
-  // start session by setting session user to user logged in
+  // start session by setting session user to user logged in/registered and then call callback
   req.session.regenerate((err) => {
-    if (!err) {
-      req.session.user = user;
-      // TODO: id
-    } else {
-    	// call callback with error
-      cb(err);
-    }
+    console.log('helllooooooooooooooooo', user);
+    req.session.user = user;
   });
+  cb();
 }
 
 module.exports = {
