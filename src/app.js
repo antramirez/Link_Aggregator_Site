@@ -131,7 +131,7 @@ app.get('/:username', (req, res) => {
       // now check if there are any articles that have an id that matches the user's id
       Article.find({userId: user._id}, function(err, articles, count) {
         // render page
-        res.render('user-single', {articles: articles, username: req.params.username});
+        res.render('user-single', {articles: articles.reverse(), username: req.params.username});
       });
     }
     else {
