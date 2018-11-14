@@ -27,7 +27,7 @@ app.use((req, res, next) => {
   // set local variable user to session user
   res.locals.user = req.session.user;
   next();
-})
+});
 
 app.get('/', (req, res) => {
   Article.find({}, function(err, articles, count) {
@@ -59,7 +59,7 @@ app.post('/article/add', (req, res) => {
       console.log(err);
       const errObj = {message: 'COULD NOT ADD ARTICLE'};
       console.log(errObj.message);
-      res.render('article-add', {message: errObj.message})
+      res.render('article-add', {message: errObj.message});
     }
     else {
       // if no error, redirect to homepage
@@ -74,7 +74,7 @@ app.get('/article/:slug', (req, res) => {
     // once article is found, look for user that has object id that matches related article id
     User.findOne({_id: article.userId}, function(err, user, count) {
       // render the page with appropriate context object
-      res.render('article-detail', {a: article, u: user})
+      res.render('article-detail', {a: article, u: user});
     });
   });
 });
@@ -110,7 +110,7 @@ app.post('/login', (req, res) => {
   // error call back
   (errObj) => {
     // redisplay login page but with error message
-    res.render('login', {message: errObj.message})
+    res.render('login', {message: errObj.message});
   },
   // success call back
   (user) => {
@@ -119,6 +119,26 @@ app.post('/login', (req, res) => {
       req.session.user = user;
       res.redirect('/');
     });
+  });
+});
+
+
+app.get('/:username', (req, res) => {
+  // look for user that has username that matches the username parameter
+  User.findOne({username: req.params.username}, function(err, user, count) {
+    // check if user exists
+    if (user) {
+      // now check if there are any articles that have an id that matches the user's id
+      Article.find({userId: user._id}, function(err, articles, count) {
+        // render page
+        res.render('user-single', {articles: articles, username: req.params.username});
+      });
+    }
+    else {
+      // 'username' is just the name of the variable used to find a user,
+      // so it could be any path that does not exist, not just a user
+      res.status(404).send('<pre>Cannot GET ' + req.path + '</pre>');
+    }
   });
 });
 

@@ -1,0 +1,12 @@
+<h1>{{username}}</h1>
+{{#if articles}}
+<ol>
+  {{#each articles as |article|}}
+    <li>
+      <a href="{{article.url}}">{{article.title}}</a>
+    </li>
+  {{/each}}
+</ol>
+{{else}}
+<div>User does not have any articles</div>
+{{/if}}

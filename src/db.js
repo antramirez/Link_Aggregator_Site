@@ -21,7 +21,7 @@ const ArticleSchema = mongoose.Schema({
 // use plugin (for slug) for article
 ArticleSchema.plugin(URLSlugs('title'));
 
-// register models
+// register schemas
 mongoose.model("User", UserSchema);
 mongoose.model("Article", ArticleSchema);
 
